@@ -1,0 +1,47 @@
+# Ignore node_modules
+node_modules/
+
+# Ignore npm debug logs
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Ignore build output
+.next/
+out/
+
+# Ignore local env files
+.env*.local
+
+# Ignore all dotfiles except .env
+.*
+!.env
+
+# Ignore Docker files
+Dockerfile
+.dockerignore
+
+# Ignore CI/CD configuration files
+.gitlab-ci.yml
+.travis.yml
+.github/
+
+# Ignore IDE specific files
+.idea/
+.vscode/
+
+# Ignore OS specific files
+.DS_Store
+Thumbs.db
+
+# Ignore test files
+__tests__/
+*.test.js
+*.spec.js
+
+# Ignore logs
+logs/
+*.log
+
+# Ignore cache
+.cache/

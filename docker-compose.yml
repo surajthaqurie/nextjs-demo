@@ -1,0 +1,41 @@
+services:
+  fe_dev:
+    container_name: fe_${NODE_ENV}_${APP_NAME}
+    build:
+      dockerfile: Dockerfile
+      context: .
+      target: development
+    env_file:
+      - ./.env
+    volumes:
+      - .:/usr/src/app
+    command: npm run dev
+    restart: unless-stopped
+    ports:
+      - "${PORT}:3000"
+
+  fe_staging:
+    container_name: fe_${NODE_ENV}_${APP_NAME}
+    build:
+      dockerfile: Dockerfile
+      context: .
+      target: runner
+    env_file:
+      - ./.env
+    command: node server.js
+    ports:
+      - "${PORT}:3000"
+    restart: unless-stopped
+
+  fe_prod:
+    container_name: fe_${NODE_ENV}_${APP_NAME}
+    build:
+      dockerfile: Dockerfile
+      context: .
+      target: runner
+    env_file:
+      - ./.env
+    command: node server.js
+    restart: unless-stopped
+    ports:
+      - "${PORT}:3000"

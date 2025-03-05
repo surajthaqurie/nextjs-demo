@@ -6,22 +6,37 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepare": "sh .husky/husky-prepare.sh",
+    "format:write": "npx prettier --write \"**/*.{ts,tsx}\" --cache",
+    "format:check": "npx prettier --check \"**/*.{ts,tsx}\" --cache"
   },
   "dependencies": {
+    "next": "15.2.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "next": "15.2.1"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
+    "@typescript-eslint/eslint-plugin": "^8.26.0",
+    "@typescript-eslint/parser": "^8.26.0",
+    "eslint": "^9.21.0",
+    "eslint-config-next": "^15.2.1",
+    "eslint-config-prettier": "^10.0.2",
+    "eslint-plugin-prettier": "^5.2.3",
+    "husky": "^9.1.7",
+    "prettier": "^3.5.3",
     "tailwindcss": "^4",
-    "eslint": "^9",
-    "eslint-config-next": "15.2.1",
-    "@eslint/eslintrc": "^3"
+    "typescript": "^5"
+  },
+  "validate-branch-name": {
+    "pattern": "^(feature|bug|release|)\\/[0-9]+-[a-z]+(?:_[a-z]+){0,3}$",
+    "errorMsg": "Invalid branch. Please create branch in proper ways, for example: \n - feature/+work_item_id+”-” +task_keyword(4words max) \n - bug (or issue)/+work_item_id+”-” +bug_keyword(4words max)"
   }
 }

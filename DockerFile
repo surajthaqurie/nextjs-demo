@@ -1,0 +1,84 @@
+#Base image
+FROM node:18-alpine AS base
+
+#Install dependencies only when needed
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+#Install dependencies based on the preferred package manager
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+
+#Remove the husky install
+RUN sed -i '/"prepare":/d' package.json
+
+#Install dependencies
+RUN npm ci
+
+#Development stage
+FROM base AS development
+WORKDIR /app
+
+#Copy dependencies and source code
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+#Set environment variables for development
+ENV NODE_ENV=development
+
+#Expose development server port
+EXPOSE ${PORT}
+
+CMD ["npm", "run", "dev"]
+
+#Build the app
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+#Create the build for production 
+RUN npm run build
+
+#Production image
+FROM base AS runner
+WORKDIR /app
+
+#Set production environment
+ENV NODE_ENV=production
+
+#Define build-time variables for user and group
+ARG NEXT_USER=nextjs
+ARG NODE_GROUP=nodejs
+
+#Create user and group
+RUN addgroup --system --gid 1001 ${NODE_GROUP}
+RUN adduser --system --uid 1001 ${NEXT_USER}
+
+
+# Set the correct permission for prerender cache
+RUN mkdir .next
+RUN chown ${NEXT_USER}:${NODE_GROUP} .next
+# RUN mkdir -p .next
+
+#Copy built application and production dependencies
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/package-lock.json*  ./
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.env ./.env
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=${NEXT_USER}:${NODE_GROUP} /app/.next/standalone ./
+COPY --from=builder --chown=${NEXT_USER}:${NODE_GROUP} /app/.next/static ./.next/static
+
+# Copy the script from the builder stage
+RUN sed -i '/"prepare":/d' package.json
+
+#Install only production dependencies
+RUN npm ci --omit=dev;
+
+USER ${NEXT_USER}
+
+#Start the server using the production build
+CMD ["node", "server.js"]
