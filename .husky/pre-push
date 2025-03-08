@@ -1,4 +1,9 @@
 
 added_files=$(git diff --name-only --cached --diff-filter=d)
+
 npx validate-branch-name
-git add ${added_files}
+
+if [[ -n "$added_files" ]]; then
+  git add $added_files
+fi
+

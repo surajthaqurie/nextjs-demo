@@ -45,3 +45,5 @@ logs/
 
 # Ignore cache
 .cache/
+
+example.js
