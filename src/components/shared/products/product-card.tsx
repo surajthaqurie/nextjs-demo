@@ -1,0 +1,31 @@
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import Image from 'next/image';
+import Link from 'next/link';
+import ProductPrice from './product-price';
+import { ISampleProduct } from '@/db/sample-data';
+
+const ProductCard = ({ product }: { product: ISampleProduct }) => {
+  return (
+    <Card className="w-full max-w-sm">
+      <CardHeader className="items-center p-0">
+        <Link href={`product/${product.slug}`}>
+          <div className="h-60">
+            <Image className="object-cover" src={product.images[0]} alt={product.name} width={300} height={300} priority={true} />
+          </div>{' '}
+        </Link>
+      </CardHeader>
+      <CardContent className="grid gap-4 p-4">
+        <div className="mb-2 text-xs">{product.brand}</div>
+        <Link href={`product/${product.slug}`}>
+          <h2 className="text-sm font-medium">{product.name}</h2>
+        </Link>
+        <div className="flex-between gap4">
+          <p>{product.rating} Stars</p>
+          {product.stock > 0 ? <ProductPrice value={Number(product.price)} /> : <p className="text-destructive">Out of stock!</p>}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default ProductCard;
