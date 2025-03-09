@@ -3,6 +3,7 @@ import { Roboto } from 'next/font/google';
 
 import '@/assets/styles/globals.css';
 import { APP_NAME, SERVER_URL } from '@/lib/constants';
+import { ThemeProvider } from '@/components/theme-provider';
 
 // Google font
 const roboto = Roboto({ subsets: ['latin'], weight: ['300', '700'] });
@@ -23,8 +24,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${roboto.className}`}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${roboto.className}`}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
