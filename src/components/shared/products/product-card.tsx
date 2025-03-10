@@ -2,9 +2,9 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Image from 'next/image';
 import Link from 'next/link';
 import ProductPrice from './product-price';
-import { ISampleProduct } from '@/db/sample-data';
+import { IProductSampleData } from '@/db/interfaces';
 
-const ProductCard = ({ product }: { product: ISampleProduct }) => {
+const ProductCard = ({ product }: { product: IProductSampleData }) => {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader className="items-center p-0">

@@ -1,7 +1,7 @@
-import { ISampleProduct } from '@/db/sample-data';
+import { IProductSampleData } from '@/db/interfaces';
 import ProductCard from './product-card';
 
-const ProductList = ({ data, title, limit }: { data: ISampleProduct[]; title?: string; limit?: number }) => {
+const ProductList = ({ data, title, limit }: { data: IProductSampleData[]; title?: string; limit?: number }) => {
   // const limitData = limit ? data.slice(0, limit) : data;
   if (limit) {
     limit = 0;
