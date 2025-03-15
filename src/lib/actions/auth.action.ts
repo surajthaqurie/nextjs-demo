@@ -1,12 +1,12 @@
-import { SignupFormSchema, FormState } from '@/lib/definitions';
-import { api } from '@/lib/api'; // Use the global Axios instance
-import { redirect } from 'next/navigation';
+import { FormState, SignupFormSchema } from '@/lib/definitions'; // Your form validation schema
 import axios from 'axios';
 import { SERVER_URL } from '../constants';
 
-// Define TypeScript interface for API responses
 interface AuthResponse {
-  token: string;
+  status: number;
+  data?: { id: string; accessToken: string; refreshToken: string };
+  success: boolean;
+  message: string;
 }
 
 export async function login(state: FormState, formData: FormData) {
@@ -16,34 +16,42 @@ export async function login(state: FormState, formData: FormData) {
     password: formData.get('password'),
   });
 
+  // If validation fails, return the errors
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
     };
   }
 
+  // Extract validated data
   const { email, password } = validatedFields.data;
 
   try {
-    // Use global Axios instance (`api`)
-    const response = await axios.post<AuthResponse>(SERVER_URL + 'auth/admin/login', {
+    // Make API request to login
+    const { data: authData } = await axios.post<AuthResponse>(`${SERVER_URL}/auth/admin/login`, {
       email,
       password,
     });
 
-    console.log(response.data);
+    // Handle successful login
+    if (authData?.success && authData.data) {
+      // Store tokens in localStorage or cookies (if needed)
+      localStorage.setItem('accessToken', authData.data.accessToken);
+      localStorage.setItem('refreshToken', authData.data.refreshToken);
 
-    // Redirect user after successful login
-    redirect('/');
+      // Redirect to the home page on successful login
+      return { success: authData.success, message: authData.message };
+    }
   } catch (error: any) {
-    if (error.response) {
+    // Handle API errors
+    if (axios.isAxiosError(error)) {
+      // Axios-specific error (e.g., network error, 4xx/5xx response)
       return {
-        message: error.response.data.message || 'Login failed. Please try again.',
-        status: error.response.status,
+        message: error.response?.data.message || 'Login failed. Please try again.',
+        status: error.response?.status || 500,
       };
-    } else if (error.request) {
-      return { message: 'No response from server. Please check your connection.', status: 500 };
     } else {
+      // Generic error (e.g., unexpected error)
       return { message: 'An unexpected error occurred.', status: 500 };
     }
   }
