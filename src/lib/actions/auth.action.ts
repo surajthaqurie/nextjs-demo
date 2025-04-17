@@ -56,3 +56,37 @@ export async function login(state: FormState, formData: FormData) {
     }
   }
 }
+
+export async function logout() {
+  try {
+    const accessToken = localStorage.getItem('accessToken');
+    const { data: logoutData } = await axios.post<AuthResponse>(
+      `${SERVER_URL}/auth/admin/logout`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+
+    console.log('🚀 ~ logout ~ logoutData:', logoutData);
+
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+
+    return logoutData;
+  } catch (error) {
+    // Handle API errors
+    if (axios.isAxiosError(error)) {
+      // Axios-specific error (e.g., network error, 4xx/5xx response)
+      return {
+        message: error.response?.data.message || 'Login failed. Please try again.',
+        status: error.response?.status || 500,
+      };
+    } else {
+      // Generic error (e.g., unexpected error)
+      return { message: 'An unexpected error occurred.', status: 500 };
+    }
+  }
+}

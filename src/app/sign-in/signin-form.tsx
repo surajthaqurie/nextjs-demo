@@ -32,7 +32,7 @@ export function LoginForm() {
     if (state?.success) {
       setIsRedirecting(true);
     } else {
-      alert(state?.message);
+      if (state) alert(state?.message);
     }
   }, [state]);
 
