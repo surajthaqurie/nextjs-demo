@@ -5,71 +5,73 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
-import { useState, useActionState, startTransition, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // Import useRouter
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { loginFormSchema } from '@/lib/definitions';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { loginFormSchemaType } from '@/lib/types';
 
-export function LoginForm() {
-  const [state, action, pending] = useActionState(login, undefined);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const router = useRouter(); // Initialize router
-  const [isRedirecting, setIsRedirecting] = useState(false);
+function LoginForm() {
+  const [actionError, setActionError] = useState<string | null>(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/';
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    const formData = new FormData();
-    formData.append('email', email);
-    formData.append('password', password);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<loginFormSchemaType>({
+    resolver: zodResolver(loginFormSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
 
-    // Wrap the action call in startTransition
-    startTransition(async () => {
-      action(formData); // Pass FormData to the login action
-    });
+  const onSubmit = async (data: loginFormSchemaType) => {
+    try {
+      const formData = new FormData();
+      formData.append('email', data.email);
+      formData.append('password', data.password);
+
+      const response = await login(null, formData);
+
+      if (response.success) {
+        router.push(callbackUrl);
+      } else {
+        setActionError(response.message);
+      }
+    } catch (err) {
+      console.error(err);
+      setActionError('An unexpected error occurred. Please try again.');
+    }
   };
 
-  // Effect to handle redirection after successful login
-  useEffect(() => {
-    if (state?.success) {
-      setIsRedirecting(true);
-    } else {
-      if (state) alert(state?.message);
-    }
-  }, [state]);
-
-  // Redirect to home page once login is successful
-  useEffect(() => {
-    if (isRedirecting) {
-      router.push('/');
-    }
-  }, [isRedirecting, router]);
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
         <Label htmlFor="email">Email</Label>
-        <Input id="email" name="email" type="email" required autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} />
-        {state?.errors?.email && <p className="text-red-500">{state.errors.email}</p>}
+        <Input id="email" type="email" autoComplete="email" {...register('email')} />
+        {errors.email && <p className="text-red-500">{errors.email.message}</p>}
       </div>
+
       <div>
         <Label htmlFor="password">Password</Label>
-        <Input id="password" name="password" type="password" required autoComplete="current-password" value={password} onChange={e => setPassword(e.target.value)} />
-        {state?.errors?.password && (
-          <div className="text-red-500">
-            <p>Password must:</p>
-            <ul>
-              {state.errors.password.map(error => (
-                <li key={error}>- {error}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <Input id="password" type="password" autoComplete="current-password" {...register('password')} />
+        {errors.password && <p className="text-red-500">{errors.password.message}</p>}
       </div>
-      <Button className="w-full" variant="default" disabled={pending}>
-        {pending ? 'Signing In...' : 'Sign In'}
+
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? 'Signing In...' : 'Sign In'}
       </Button>
+
+      {actionError && <div className="text-destructive text-center">{actionError}</div>}
+
       <div className="text-muted-foreground text-center text-sm">
         Don&apos;t have an account?{' '}
-        <Link href="/sign-up" target="_self" className="link">
+        <Link href="/sign-up" className="link">
           Sign up
         </Link>
       </div>

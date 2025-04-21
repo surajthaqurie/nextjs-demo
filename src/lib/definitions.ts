@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const SignupFormSchema = z.object({
+export const loginFormSchema = z.object({
   email: z
     .string() /* .email({ message: 'Please enter a valid email.' }) */
     .trim(),
@@ -15,12 +15,14 @@ export const SignupFormSchema = z.object({
     .trim(),
 });
 
-export type FormState =
-  | {
-      errors?: {
-        email?: string[];
-        password?: string[];
-      };
-      message?: string;
-    }
-  | undefined;
+export const signUpFormSchema = z
+  .object({
+    name: z.string().min(3, 'Name must be at least 3 characters'),
+    email: z.string().trim().email('Invalid email address'),
+    password: z.string().trim().min(6, 'Password must be at least 6 characters'),
+    confirmPassword: z.string().trim().min(6, 'Confirm password must be at least 6 characters'),
+  })
+  .refine(data => data.password === data.confirmPassword, {
+    message: "Password don't match",
+    path: ['confirmPassword'],
+  });
