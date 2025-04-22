@@ -57,11 +57,11 @@ const UserButton = () => {
             </Button>
           </div>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent align="start" className="w-56 md:mr-4">
           <DropdownMenuLabel className="w-56">
             <div className="flex-col space-y-1">
-              <div className="text-sm leading-none font-medium">{initialName}</div>
-              <div className="text-muted-foreground text-sm leading-none">{initialEmail}</div>
+              <div className="text-sm leading-none font-bold">{initialName}</div>
+              <div className="text-sm leading-none font-normal text-gray-600">{initialEmail}</div>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />

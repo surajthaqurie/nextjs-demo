@@ -1,5 +1,6 @@
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
 import { loginFormSchema, signUpFormSchema } from './definitions';
+import { AxiosError } from 'axios';
 
 export interface AuthResponse {
   status: number;

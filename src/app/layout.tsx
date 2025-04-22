@@ -4,6 +4,7 @@ import { Roboto } from 'next/font/google';
 import '@/assets/styles/globals.css';
 import { APP_NAME, SERVER_URL } from '@/lib/constants';
 import { ThemeProvider } from '@/components/theme-provider';
+// import { ErrorWrapper } from './error-wrapper';
 
 // Google font
 const roboto = Roboto({ subsets: ['latin'], weight: ['300', '700'] });
@@ -27,7 +28,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${roboto.className}`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          {/* <ErrorWrapper> */}
           {children}
+          {/* </ErrorWrapper> */}
         </ThemeProvider>
       </body>
     </html>
