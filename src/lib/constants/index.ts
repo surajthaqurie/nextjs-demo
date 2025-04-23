@@ -5,3 +5,5 @@ export const signinDefaultValue = {
   email: '',
   password: '',
 };
+
+export const userUUID = 'b5584baa-7e50-410a-86e1-2744bfc3739cs';

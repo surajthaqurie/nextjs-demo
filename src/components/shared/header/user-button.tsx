@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { UserIcon } from 'lucide-react';
 import Link from 'next/link';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { logout } from '@/lib/actions/auth.action';
+import { getCookies, logout } from '@/lib/actions/auth.action';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -14,8 +14,12 @@ const UserButton = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const token = window.localStorage.getItem('accessToken');
-    setSession(token);
+    const fetchToken = async () => {
+      const token = await getCookies('accessToken');
+      setSession(token as string);
+    };
+
+    fetchToken();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
+import { Toaster } from '@/components/ui/sonner';
 
 import '@/assets/styles/globals.css';
 import { APP_NAME, SERVER_URL } from '@/lib/constants';
@@ -26,10 +27,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${roboto.className}`}>
+      <body className={roboto.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {/* <ErrorWrapper> */}
           {children}
+          <Toaster />
           {/* </ErrorWrapper> */}
         </ThemeProvider>
       </body>

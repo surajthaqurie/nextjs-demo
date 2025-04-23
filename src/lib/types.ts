@@ -1,6 +1,5 @@
-import { z, ZodError } from 'zod';
-import { loginFormSchema, signUpFormSchema } from './definitions';
-import { AxiosError } from 'axios';
+import { z } from 'zod';
+import { cartItemSchema, insertCartSchema, loginFormSchema, signUpFormSchema } from './definitions';
 
 export interface AuthResponse {
   status: number;
@@ -13,3 +12,6 @@ export type FormState = { errors?: Record<string, string[]>; message?: string } 
 
 export type loginFormSchemaType = z.infer<typeof loginFormSchema>;
 export type signupFormSchemaType = z.infer<typeof signUpFormSchema>;
+
+export type ICart = z.infer<typeof insertCartSchema>;
+export type ICartItem = z.infer<typeof cartItemSchema>;

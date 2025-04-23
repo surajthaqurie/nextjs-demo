@@ -1,6 +1,7 @@
 import { SERVER_URL } from '@/lib/constants';
 import { AuthResponse } from '@/lib/types';
 import axios from 'axios';
+import { cookies } from 'next/headers';
 
 export const loginUser = async (email: string, password: string) => {
   try {
@@ -11,9 +12,9 @@ export const loginUser = async (email: string, password: string) => {
 
     // Handle successful login
     if (authData?.success && authData.data) {
-      // Store tokens in localStorage or cookies (if needed)
-      localStorage.setItem('accessToken', authData.data.accessToken);
-      localStorage.setItem('refreshToken', authData.data.refreshToken);
+      const cookieStore = await cookies();
+      cookieStore.set('accessToken', authData.data.accessToken, { httpOnly: true, sameSite: 'strict', path: '/' }); // maxAge
+      cookieStore.set('refreshToken', authData.data.refreshToken, { httpOnly: true, sameSite: 'strict', path: '/' }); // maxAge:
 
       // Redirect to the home page on successful login
       return { success: authData.success, message: authData.message };

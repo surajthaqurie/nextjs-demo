@@ -2,23 +2,22 @@ import { IProductSampleData } from '@/db/interfaces';
 import ProductCard from './product-card';
 
 const ProductList = ({ data, title, limit }: { data: IProductSampleData[]; title?: string; limit?: number }) => {
-  // const limitData = limit ? data.slice(0, limit) : data;
-  if (limit) {
-    limit = 0;
-  }
+  // If limit is 0, return an empty array, otherwise slice the data based on the limit
+  const limitData = limit === 0 ? [] : data.slice(0, limit || data.length);
+
   return (
     <div className="my-10">
       <h2 className="h2-bold mb-4">{title}</h2>
 
-      {data.length > 0 ? (
+      {limitData.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {data.map(product => (
+          {limitData.map(product => (
             <ProductCard key={product.slug} product={product} />
           ))}
         </div>
       ) : (
         <div>
-          <p>Products(s) not found!</p>
+          <p>Product(s) not found!</p>
         </div>
       )}
     </div>

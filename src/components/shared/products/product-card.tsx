@@ -40,7 +40,7 @@ const ProductCard = ({ product }: { product: IProductSampleData }) => {
           </div>
         </div>
 
-        <div className="flex-between gap4">
+        <div className="flex justify-between gap-4">
           <p>{product.rating} Stars</p>
           {product.stock > 0 ? <ProductPrice value={Number(product.price)} /> : <p className="text-destructive">Out of stock!</p>}
         </div>
